@@ -2,11 +2,23 @@
 
     require __DIR__.'/vendor/autoload.php';
 
-    define('TITLE', 'Cadastrar vaga');
+    define('TITLE', 'Editar vaga');
 
     use App\Entity\Vaga; // Uso da classe Vaga
 
-    $obVaga = new Vaga;
+    if(!isset($_GET['id']) OR !is_numeric($_GET['id'])){
+        header('Location: index.php?status=error');
+        exit;
+    }
+
+    // CONSULTA VAGA
+    $obVaga = Vaga::getVaga($_GET['id']);
+    
+    //VALIDAÇÃO DA VAGA
+    if(!$obVaga instanceof Vaga){
+        header('Location: index.php?status=error');
+        exit;
+    }
 
     // Validação do POST
     if(isset($_POST['titulo'], $_POST['descricao'], $_POST['ativo'])){
@@ -15,7 +27,7 @@
         $obVaga->descricao = $_POST['descricao'];
         $obVaga->ativo = $_POST['ativo'];
 
-        $obVaga->cadastrar();
+        $obVaga->atualizar();
 
         header('Location: index.php?status=success');
         exit;
